@@ -5,6 +5,7 @@ pg.init()
 
 screen = pg.display.set_mode((400, 300))
 pg.display.set_caption("Typing Accuracy Test")
+clock = pg.time.Clock()
 
 font_big = pg.font.Font("./font.ttf", 50)
 font = pg.font.Font("./font.ttf", 36)
@@ -70,7 +71,9 @@ if __name__ == "__main__":
     weight = [1 for i in range(len(letter_map))]
     text = generate_text(level, weight)
     is_correct = True
+    lpm = 0
     while running:
+        clock.tick(60)
         accuracy = correct / (correct + mistakes) * 100 if correct + mistakes > 0 else 0
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -96,6 +99,11 @@ if __name__ == "__main__":
             text.upper(), True, (0, 0, 0) if is_correct else (255, 0, 0)
         )
         screen.blit(text_surface, (100, 10))
+
+        lpm = correct / (pg.time.get_ticks() / 60000)
+
+        lpm_surface = font.render(f"LPM: {lpm:.2f}", True, (0, 0, 0))
+        screen.blit(lpm_surface, (10, 150))
 
         accuracy_surface = font.render(f"Accuracy: {accuracy:.2f}%", True, (0, 0, 0))
         screen.blit(accuracy_surface, (10, 200))
